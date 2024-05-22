@@ -1,15 +1,21 @@
 import { TextField, TextFieldProps } from '@mui/material';
-import { Controller } from 'react-hook-form';
+import { Controller, useFormContext } from 'react-hook-form';
 import { ChangeEvent } from 'react';
 import { FormInputProps } from './form-input-props';
 
-export function FormTextField({
+export default function FormTextField({
   name,
   control,
   label,
   rules,
   ...textFieldProps
 }: FormInputProps & TextFieldProps) {
+  const formContext = useFormContext();
+
+  if (!control) {
+    control = formContext.control;
+  }
+
   const _onChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     onChange: (...event: any[]) => void,

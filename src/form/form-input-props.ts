@@ -9,7 +9,7 @@ export type FormRules =
 
 export type FormInputProps = {
   name: string;
-  control: Control<any>;
+  control?: Control<any>;
   label?: string;
   rules?:
     | Omit<

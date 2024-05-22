@@ -13,7 +13,7 @@ import {
 import { TransitionProps } from '@mui/material/transitions';
 import React, { forwardRef, useImperativeHandle, useState } from 'react';
 
-const SlideTransition = forwardRef(function SlideTransition(
+export const SlideTransition = forwardRef(function SlideTransition(
   props: TransitionProps & { children: React.ReactElement<any, any> },
   ref: React.Ref<unknown>,
 ) {

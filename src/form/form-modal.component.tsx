@@ -1,18 +1,16 @@
 import { FormEventHandler, PropsWithChildren } from 'react';
-import FormCard from './form-card.component';
-import SlideModal from '../slide-modal.component';
-import { useAlertPrompt } from '../alert-prompt.component';
+import {
+  Box,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  IconButton,
+} from '@mui/material';
+import { Close } from '@mui/icons-material';
+import { SlideTransition } from '../slide-modal/slide-modal.component';
+import { useAlertPrompt } from '../alert-prompt/alert-prompt.component';
 
-export default function FormModal({
-  title,
-  loading,
-  open,
-  isDirty,
-  onClose,
-  onSubmit,
-  onModalExited,
-  children,
-}: {
+type FormModalProps = {
   title: string;
   loading?: boolean;
   open: boolean;
@@ -20,7 +18,18 @@ export default function FormModal({
   onClose?: () => void;
   onSubmit?: FormEventHandler<HTMLFormElement>;
   onModalExited?: () => void;
-} & PropsWithChildren) {
+} & PropsWithChildren;
+
+export default function FormModal({
+  title,
+  loading,
+  isDirty,
+  open,
+  onSubmit,
+  onModalExited,
+  onClose,
+  children,
+}: FormModalProps) {
   const { promptAlert } = useAlertPrompt();
 
   const handleClose = () => {
@@ -35,25 +44,45 @@ export default function FormModal({
         onOk: onClose,
       });
     } else {
-      if (onClose) onClose();
+      if (onClose) {
+        onClose();
+      }
     }
   };
 
   return (
-    <SlideModal
+    <Dialog
       open={open}
-      transitionProps={{
-        onExited: onModalExited,
+      TransitionComponent={SlideTransition}
+      closeAfterTransition
+      sx={{
+        '.MuiDialog-container': {
+          overflowY: !open ? 'hidden' : undefined,
+        },
       }}
+      onTransitionExited={onModalExited}
+      onClose={handleClose}
     >
-      <FormCard
-        title={title}
-        loading={loading}
-        onClose={handleClose}
-        onSubmit={onSubmit}
+      <DialogTitle sx={{ pb: 0 }}>{title}</DialogTitle>
+
+      <IconButton
+        sx={{
+          position: 'absolute',
+          top: 0,
+          right: 0,
+        }}
+        onClick={handleClose}
       >
-        {children}
-      </FormCard>
-    </SlideModal>
+        <Close />
+      </IconButton>
+
+      <DialogContent sx={{ pt: 3 }}>
+        <Box component="form" noValidate onSubmit={onSubmit}>
+          <Box component="fieldset" disabled={loading}>
+            {children}
+          </Box>
+        </Box>
+      </DialogContent>
+    </Dialog>
   );
 }

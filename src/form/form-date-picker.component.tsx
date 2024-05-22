@@ -4,7 +4,7 @@ import {
   LocalizationProvider,
 } from '@mui/x-date-pickers';
 import { FormInputProps } from './form-input-props';
-import { Controller } from 'react-hook-form';
+import { Controller, useFormContext } from 'react-hook-form';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import 'dayjs/locale/en-gb';
 import dayjs, { Dayjs } from 'dayjs';
@@ -19,6 +19,12 @@ export default function FormDatePicker({
   rules,
   ...datePickerProps
 }: FormInputProps & DatePickerProps<Dayjs>) {
+  const formContext = useFormContext();
+
+  if (!control) {
+    control = formContext.control;
+  }
+
   return (
     <Controller
       name={name}

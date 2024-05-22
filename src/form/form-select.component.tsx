@@ -4,7 +4,7 @@ import {
   FormControlProps,
   TextField,
 } from '@mui/material';
-import { Controller, useWatch } from 'react-hook-form';
+import { Controller, useFormContext, useWatch } from 'react-hook-form';
 import { useEffect, useState } from 'react';
 import { FormInputProps } from './form-input-props';
 
@@ -18,7 +18,7 @@ export type FormSelectProps = {
 } & FormControlProps &
   FormInputProps;
 
-export function FormSelect({
+export default function FormSelect({
   name,
   control,
   label,
@@ -26,6 +26,12 @@ export function FormSelect({
   rules,
   ...props
 }: FormSelectProps) {
+  const formContext = useFormContext();
+
+  if (!control) {
+    control = formContext.control;
+  }
+
   const [autoCompleteValue, setAutocompleteValue] = useState<any>(null);
   const value = useWatch({
     name,

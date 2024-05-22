@@ -25,7 +25,12 @@ import {
   useState,
 } from 'react';
 
-type AlertIconType = 'success' | 'info' | 'warning' | 'error' | 'question';
+export type AlertIconType =
+  | 'success'
+  | 'info'
+  | 'warning'
+  | 'error'
+  | 'question';
 
 export type AlertPromptProps = {
   title?: string;
