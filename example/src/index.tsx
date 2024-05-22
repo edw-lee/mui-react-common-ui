@@ -3,13 +3,18 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { AlertPrompt, Spinner } from '@edwinlee/common-ui';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement,
 );
 root.render(
   <React.StrictMode>
-    <App />
+    <Spinner.SpinnerProvider>
+      <AlertPrompt.AlertPromptProvider>
+        <App />
+      </AlertPrompt.AlertPromptProvider>
+    </Spinner.SpinnerProvider>
   </React.StrictMode>,
 );
 
