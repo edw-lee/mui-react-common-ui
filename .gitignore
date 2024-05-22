@@ -1,0 +1,8 @@
+/node_modules
+/dist
+
+logs
+*.logsnpm-debug.log*
+
+.DS_Store
+*.code-workspace
