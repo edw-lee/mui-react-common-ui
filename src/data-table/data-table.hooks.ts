@@ -5,9 +5,15 @@ export type UseDataTableProps<T> = {
   rows: T[];
   idField: keyof T;
   columns: DataTableColumn<T>[];
+  sortDirections?: Record<string, number>;
 };
 
-const useDataTable = <T>({ rows, idField }: UseDataTableProps<T>) => {
+const useDataTable = <T>({
+  rows,
+  idField,
+  columns,
+  sortDirections,
+}: UseDataTableProps<T>) => {
   const [selected, setSelected] = useState<string[]>([]);
 
   const onCheck = useCallback(
@@ -55,6 +61,28 @@ const useDataTable = <T>({ rows, idField }: UseDataTableProps<T>) => {
 
   const selectedCount = useMemo(() => selected.length, [selected]);
 
+  const fieldsSortDirections = useMemo(() => {
+    const result: Record<string, number> = {};
+
+    columns.forEach((column) => {
+      if (!sortDirections) {
+        result[column.field] = 1;
+        return;
+      }
+
+      const fields = column.field.split(',');
+
+      const sort = fields.reduce(
+        (prev, field) => Math.sign(sortDirections[field] + prev),
+        1,
+      );
+
+      result[column.field] = sort;
+    });
+
+    return result;
+  }, [sortDirections]);
+
   return {
     onCheck,
     onCheckAll,
@@ -63,6 +91,7 @@ const useDataTable = <T>({ rows, idField }: UseDataTableProps<T>) => {
     isAllChecked,
     selectedCount,
     selected,
+    fieldsSortDirections,
   };
 };
 

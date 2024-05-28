@@ -82,10 +82,12 @@ export default function DataTable<T extends Record<string, any>>({
     isAllChecked,
     selectedCount,
     selected,
+    fieldsSortDirections,
   } = useDataTable({
     rows: rows ?? [],
     idField,
     columns,
+    sortDirections,
   });
 
   const filters: DataTableToolbarFilter[] = columns
@@ -131,7 +133,7 @@ export default function DataTable<T extends Record<string, any>>({
                     {col.sortable && (
                       <SortIcon
                         sortDirection={
-                          sortDirections[col.field] > 0 ? 'asc' : 'desc'
+                          fieldsSortDirections[col.field] > 0 ? 'asc' : 'desc'
                         }
                         onClick={() =>
                           onSortDirectionClicked &&

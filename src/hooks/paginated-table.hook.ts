@@ -35,12 +35,22 @@ const usePaginatedTable = ({
     [sortDirections],
   );
 
-  const onSortDirectionChange = (field: string) => {
-    const sort = sortDirections[field];
+  const onSortDirectionChange = (fieldString: string) => {
+    const fields = fieldString.split(',');
 
-    delete sortDirections[field];
+    let newSortDirections = { ...sortDirections };
 
-    setSortDirections({ [field]: -sort, ...sortDirections });
+    fields.forEach((field) => {
+      const sort = newSortDirections[field] ? -newSortDirections[field] : 1;
+
+      //Remove orginal field
+      delete newSortDirections[field];
+
+      //Add to the first position so that the latest sort is prioritised
+      newSortDirections = { [field]: sort, ...newSortDirections };
+    });
+
+    setSortDirections(newSortDirections);
   };
 
   const setFilters = (_filters: Record<string, string>) => {
