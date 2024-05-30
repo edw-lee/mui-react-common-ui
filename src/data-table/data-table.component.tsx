@@ -22,7 +22,7 @@ import DataTableToolbar, {
   DataTableToolbarFilter,
   DataTableToolbarFilterType,
   DataTableToolbarProps,
-} from './data-table-toolbar.component';
+} from './data-table-toolbar';
 import SortIcon from './sort-button.component';
 
 export type DataTableColumn<T> = {
@@ -30,6 +30,7 @@ export type DataTableColumn<T> = {
   header: string;
   flex?: string;
   sortable?: boolean;
+  filterLabel?: string;
   filterType?: DataTableToolbarFilterType;
   getter?: (row: T) => any;
 };
@@ -40,7 +41,7 @@ export type DataTableProps<T> = {
   idField?: string;
   noDataText?: string;
   emptyCellText?: string;
-  onDelete?: (deleteIds: string[]) => void;
+  onDelete?: (deleteIds: string[], clearSelected: () => void) => void;
   onRowClick?: (data: T) => void;
   customToolbarButtons?: (selected: string[]) => React.JSX.Element[];
   tablePaginationProps?: TablePaginationProps;
@@ -78,6 +79,7 @@ export default function DataTable<T extends Record<string, any>>({
     onCheck,
     onCheckAll,
     onClearChecks,
+    clearSelected,
     isChecked,
     isAllChecked,
     selectedCount,
@@ -92,18 +94,23 @@ export default function DataTable<T extends Record<string, any>>({
 
   const filters: DataTableToolbarFilter[] = columns
     .filter((col) => !!col.filterType)
-    .map((col) => ({
-      field: col.field,
-      label: col.header,
-      type: col.filterType!,
-    }));
+    .flatMap((col) => {
+      const fields = col.field.split(',');
+      const labels = col.filterLabel?.split(',') ?? [col.header];
+
+      return fields.map((field, index) => ({
+        field,
+        label: labels[Math.min(index, labels.length - 1)],
+        type: col.filterType!,
+      }));
+    });
 
   return (
     <Paper component={Stack} {...paperContainerProps}>
       <DataTableToolbar
         title={title}
         selectedCount={selectedCount}
-        onDelete={() => onDelete && onDelete(selected)}
+        onDelete={() => onDelete && onDelete(selected, clearSelected)}
         customToolbarButtons={
           customToolbarButtons && customToolbarButtons(selected)
         }

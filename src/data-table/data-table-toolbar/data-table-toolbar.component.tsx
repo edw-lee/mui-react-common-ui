@@ -7,8 +7,8 @@ import {
   Typography,
 } from '@mui/material';
 import React, { useCallback, useRef, useState } from 'react';
-import { ClearableTextFieldType } from '../form/clearable-textfield.component';
-import TextFieldWithOptions from '../form/textfield-with-options.component';
+import FilterTextField from './filter-textfield.component';
+import { TextFieldWithOptionsType } from '../../form/textfield-with-options.component';
 
 export type DataTableToolbarFilterOperation =
   | 'regex'
@@ -17,7 +17,9 @@ export type DataTableToolbarFilterOperation =
   | 'gt'
   | 'gte'
   | 'eq'
-  | 'neq';
+  | 'neq'
+  | 'in'
+  | 'nin';
 export type DataTableToolbarFilterType = 'string' | 'number';
 export type DataTableToolbarFilterValue = {
   operation: DataTableToolbarFilterOperation;
@@ -57,7 +59,7 @@ export default function DataTableToolbar({
   const hasFilter = Boolean(filters?.length);
   const [openFilter, setOpenFilter] = useState(false);
   const [filterValues, setFilterValues] = useState<Record<string, string>>({});
-  const inputRefs = useRef<(ClearableTextFieldType | null)[]>(
+  const inputRefs = useRef<(TextFieldWithOptionsType | null)[]>(
     Array(filters?.length).fill(null),
   );
   const [operations, setOperations] = useState<
@@ -72,11 +74,11 @@ export default function DataTableToolbar({
     (
       field: string,
       value: string,
-      operation: DataTableToolbarFilterOperation,
+      operation: DataTableToolbarFilterOperation = 'regex',
     ) => {
       const newFilterValues = { ...filterValues };
 
-      ['regex', 'lt', 'lte', 'gt', 'gte', 'eq', 'neq'].forEach(
+      ['regex', 'lt', 'lte', 'gt', 'gte', 'eq', 'neq', 'nin', 'in'].forEach(
         (operation) => delete newFilterValues[`${field}[${operation}]`],
       );
 
@@ -104,10 +106,10 @@ export default function DataTableToolbar({
       operation: DataTableToolbarFilterOperation,
       index: number,
     ) => {
-      const _operations = operations.slice();
-      _operations[index] = operation;
+      const newOperations = operations.slice();
+      newOperations[index] = operation;
 
-      setOperations(_operations);
+      setOperations(newOperations);
       onFilterInput(field, value, operation);
     },
     [operations],
@@ -183,53 +185,17 @@ export default function DataTableToolbar({
       >
         <Stack flexDirection={'row'} flexWrap={'wrap'} p={2} gap={1}>
           {filters?.map(({ field, label, type }, index) => (
-            <TextFieldWithOptions
+            <FilterTextField
               ref={(el) => (inputRefs.current[index] = el)}
               type={type == 'string' ? 'text' : 'number'}
               key={field}
-              sx={{
-                flex: 1,
-                minWidth: 200,
-                maxWidth: 350,
-              }}
-              label={label ?? field}
-              inputProps={{
-                onInput: (e) =>
-                  onFilterInput(
-                    field,
-                    e.currentTarget.value,
-                    operations[index],
-                  ),
-              }}
-              onClear={() => onFilterInput(field, '', operations[index])}
-              onSelectOption={(operation, input) =>
-                onSelectOperation(field, input, operation as any, index)
+              field={field}
+              label={label}
+              onFilterInput={(value) =>
+                onFilterInput(field, value, operations[index])
               }
-              options={
-                type == 'number'
-                  ? [
-                      {
-                        label: '= ',
-                        value: 'eq',
-                      },
-                      {
-                        label: '> ',
-                        value: 'gt',
-                      },
-                      {
-                        label: '< ',
-                        value: 'lt',
-                      },
-                      {
-                        label: '>=',
-                        value: 'gte',
-                      },
-                      {
-                        label: '<=',
-                        value: 'lte',
-                      },
-                    ]
-                  : undefined
+              onSelectOperation={(value, operation) =>
+                onSelectOperation(field, value, operation, index)
               }
             />
           ))}

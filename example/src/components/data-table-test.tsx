@@ -41,6 +41,26 @@ export default function DataTableTest() {
             sortable: true,
           },
           {
+            header: 'Mixed Column',
+            field: 'column1,column2',
+            filterLabel: 'Mixed Column 1,Mixed Column 2',
+            filterType: 'string',
+            sortable: true,
+          },
+          {
+            header: 'Mixed Column 1 Label',
+            field: 'column1,column2',
+            filterLabel: 'Mixed Column 1 Label',
+            filterType: 'string',
+            sortable: true,
+          },
+          {
+            header: 'Mixed Column No Label',
+            field: 'column1,column2',
+            filterType: 'string',
+            sortable: true,
+          },
+          {
             header: 'Age',
             field: 'age',
             filterType: 'number',

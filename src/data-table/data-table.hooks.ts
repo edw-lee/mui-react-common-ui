@@ -83,10 +83,13 @@ const useDataTable = <T>({
     return result;
   }, [sortDirections]);
 
+  const clearSelected = () => setSelected([]);
+
   return {
     onCheck,
     onCheckAll,
     onClearChecks,
+    clearSelected,
     isChecked,
     isAllChecked,
     selectedCount,

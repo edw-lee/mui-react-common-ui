@@ -24,7 +24,7 @@ import DataTableToolbar, {
   DataTableToolbarFilter,
   DataTableToolbarFilterType,
   DataTableToolbarProps,
-} from '../data-table/data-table-toolbar.component';
+} from '../data-table/data-table-toolbar';
 import SortIcon from '../data-table/sort-button.component';
 
 export type CollapsibleTableColumn<T> = {
