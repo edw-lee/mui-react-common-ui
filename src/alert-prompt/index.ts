@@ -5,5 +5,5 @@ import AlertPrompt, {
   useAlertPrompt,
 } from './alert-prompt.component';
 
-export type { AlertPromptProps, AlertIconType };
-export { AlertPrompt, AlertPromptProvider, useAlertPrompt };
+export type { AlertPromptProps as Props, AlertIconType as IconType };
+export { AlertPrompt, AlertPromptProvider as Provider, useAlertPrompt };

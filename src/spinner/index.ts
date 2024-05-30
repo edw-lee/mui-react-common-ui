@@ -1,3 +1,3 @@
 import Spinner, { SpinnerProvider, useSpinner } from './spinner.component';
 
-export { Spinner, SpinnerProvider, useSpinner };
+export { Spinner, SpinnerProvider as Provider, useSpinner };

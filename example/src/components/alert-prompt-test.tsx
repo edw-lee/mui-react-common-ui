@@ -4,7 +4,7 @@ import { AlertPrompt, AlertPromptTypes } from '@edwinlee/common-ui';
 export default function AlertPromptTest() {
   const { promptAlert } = AlertPrompt.useAlertPrompt();
 
-  const onClick = (icon: AlertPromptTypes.AlertIconType) => {
+  const onClick = (icon: AlertPromptTypes.IconType) => {
     promptAlert({
       title: 'Test',
       message: 'Test alert',

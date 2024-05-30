@@ -10,11 +10,11 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <React.StrictMode>
-    <Spinner.SpinnerProvider>
-      <AlertPrompt.AlertPromptProvider>
+    <Spinner.Provider>
+      <AlertPrompt.Provider>
         <App />
-      </AlertPrompt.AlertPromptProvider>
-    </Spinner.SpinnerProvider>
+      </AlertPrompt.Provider>
+    </Spinner.Provider>
   </React.StrictMode>,
 );
 
