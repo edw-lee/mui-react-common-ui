@@ -26,12 +26,12 @@ import DataTableToolbar, {
 import SortIcon from './sort-button.component';
 
 export type DataTableColumn<T> = {
-  field: string;
+  field: string | string[];
   header: string;
   flex?: string;
   sortable?: boolean;
-  filterLabel?: string;
-  filterType?: DataTableToolbarFilterType;
+  filterLabel?: string | string[];
+  filterType?: DataTableToolbarFilterType | DataTableToolbarFilterType[];
   getter?: (row: T) => any;
 };
 
@@ -95,13 +95,25 @@ export default function DataTable<T extends Record<string, any>>({
   const filters: DataTableToolbarFilter[] = columns
     .filter((col) => !!col.filterType)
     .flatMap((col) => {
-      const fields = col.field.split(',');
-      const labels = col.filterLabel?.split(',') ?? [col.header];
+      const fields = Array.isArray(col.field) ? col.field : [col.field];
+      let labels = [col.header];
+
+      if (col.filterLabel) {
+        if (Array.isArray(col.filterLabel)) {
+          labels = col.filterLabel;
+        } else {
+          labels = [col.filterLabel];
+        }
+      }
+
+      const filterTypes = Array.isArray(col.filterType)
+        ? col.filterType
+        : [col.filterType];
 
       return fields.map((field, index) => ({
         field,
         label: labels[Math.min(index, labels.length - 1)],
-        type: col.filterType!,
+        type: filterTypes[Math.min(index, filterTypes.length - 1)]!,
       }));
     });
 
@@ -140,11 +152,13 @@ export default function DataTable<T extends Record<string, any>>({
                     {col.sortable && (
                       <SortIcon
                         sortDirection={
-                          fieldsSortDirections[col.field] > 0 ? 'asc' : 'desc'
+                          fieldsSortDirections[col.field.toString()] > 0
+                            ? 'asc'
+                            : 'desc'
                         }
                         onClick={() =>
                           onSortDirectionClicked &&
-                          onSortDirectionClicked(col.field)
+                          onSortDirectionClicked(col.field.toString())
                         }
                       />
                     )}
@@ -232,7 +246,7 @@ function DataTableRow<T extends Record<string, any>>({
     if (getter) {
       value = getter(row);
     } else {
-      value = row[field];
+      value = row[field.toString()];
     }
 
     return value ?? emptyCellText;

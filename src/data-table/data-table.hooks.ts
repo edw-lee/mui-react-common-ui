@@ -65,19 +65,23 @@ const useDataTable = <T>({
     const result: Record<string, number> = {};
 
     columns.forEach((column) => {
+      const fields = Array.isArray(column.field)
+        ? column.field
+        : [column.field];
+
+      const fieldsString = fields.toString();
+
       if (!sortDirections) {
-        result[column.field] = 1;
+        result[fieldsString] = 1;
         return;
       }
-
-      const fields = column.field.split(',');
 
       const sort = fields.reduce(
         (prev, field) => Math.sign(sortDirections[field] + prev),
         1,
       );
 
-      result[column.field] = sort;
+      result[fieldsString] = sort;
     });
 
     return result;
