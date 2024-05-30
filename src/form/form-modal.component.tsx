@@ -1,3 +1,5 @@
+'use client';
+
 import { FormEventHandler, PropsWithChildren } from 'react';
 import {
   Box,

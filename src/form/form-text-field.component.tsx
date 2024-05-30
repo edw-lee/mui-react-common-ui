@@ -1,3 +1,5 @@
+'use client';
+
 import { TextField, TextFieldProps } from '@mui/material';
 import { Controller, useFormContext } from 'react-hook-form';
 import { ChangeEvent } from 'react';
