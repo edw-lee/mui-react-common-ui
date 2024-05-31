@@ -39,10 +39,18 @@ export default function DateRangePicker({
     }
 
     const format = 'DD/MM/YYYY';
-    const from = dateRange.from ? dateRange.from.format(format) : format;
-    const to = dateRange.to ? dateRange.to.format(format) : format;
+    const from = dateRange.from?.format(format);
+    const to = dateRange.to?.format(format);
 
-    setTextFieldValue(`${from} - ${to}`);
+    if (from && to) {
+      setTextFieldValue(`${from} - ${to}`);
+    } else if (from) {
+      setTextFieldValue(`${from}`);
+    } else if (to) {
+      setTextFieldValue(`${to}`);
+    } else {
+      setTextFieldValue(`${format} - ${format}`);
+    }
   };
 
   const handleTextFieldKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {

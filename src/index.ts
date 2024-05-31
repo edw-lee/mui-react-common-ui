@@ -4,6 +4,7 @@ export { default as SlideModal } from './slide-modal';
 export { default as CollapsibleTable } from './collapsible-table';
 export { default as DataTable, DataTableToolbar } from './data-table';
 export * as Form from './form';
+export { default as DateRangePicker } from './date-range-picker';
 
 export { usePaginatedTable } from './hooks';
 

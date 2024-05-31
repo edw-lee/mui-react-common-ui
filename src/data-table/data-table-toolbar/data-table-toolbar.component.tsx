@@ -20,7 +20,7 @@ export type DataTableToolbarFilterOperation =
   | 'neq'
   | 'in'
   | 'nin';
-export type DataTableToolbarFilterType = 'string' | 'number';
+export type DataTableToolbarFilterType = 'string' | 'number' | 'date';
 export type DataTableToolbarFilterValue = {
   operation: DataTableToolbarFilterOperation;
   value: string;
@@ -46,6 +46,18 @@ export type DataTableToobarPrivateProps = {
   onClearChecksClicked?: () => void;
 };
 
+const ALL_OPERATIONS: DataTableToolbarFilterOperation[] = [
+  'eq',
+  'gt',
+  'gte',
+  'in',
+  'lt',
+  'lte',
+  'neq',
+  'nin',
+  'regex',
+];
+
 export default function DataTableToolbar({
   title,
   selectedCount,
@@ -62,57 +74,38 @@ export default function DataTableToolbar({
   const inputRefs = useRef<(TextFieldWithOptionsType | null)[]>(
     Array(filters?.length).fill(null),
   );
-  const [operations, setOperations] = useState<
-    DataTableToolbarFilterOperation[]
-  >(
-    filters?.map<DataTableToolbarFilterOperation>(({ type }) =>
-      type == 'number' ? 'eq' : 'regex',
-    ) ?? [],
-  );
 
   const onFilterInput = useCallback(
     (
       field: string,
-      value: string,
-      operation: DataTableToolbarFilterOperation = 'regex',
+      values: string[],
+      operations: DataTableToolbarFilterOperation[] = ['regex'],
     ) => {
       const newFilterValues = { ...filterValues };
 
-      ['regex', 'lt', 'lte', 'gt', 'gte', 'eq', 'neq', 'nin', 'in'].forEach(
+      ALL_OPERATIONS.forEach(
         (operation) => delete newFilterValues[`${field}[${operation}]`],
       );
 
-      const fieldKey = `${field}[${operation}]`;
+      values.map((value, index) => {
+        const operation = operations[Math.min(index, operations.length - 1)];
 
-      if (!value) {
-        delete newFilterValues[fieldKey];
-      } else {
-        newFilterValues[fieldKey] = value;
-      }
+        const fieldKey = `${field}[${operation}]`;
 
-      setFilterValues(newFilterValues);
+        if (!value) {
+          delete newFilterValues[fieldKey];
+        } else {
+          newFilterValues[fieldKey] = value;
+        }
 
-      if (onFiltersChange) {
-        onFiltersChange(newFilterValues);
-      }
+        setFilterValues(newFilterValues);
+
+        if (onFiltersChange) {
+          onFiltersChange(newFilterValues);
+        }
+      });
     },
     [filterValues],
-  );
-
-  const onSelectOperation = useCallback(
-    (
-      field: string,
-      value: string,
-      operation: DataTableToolbarFilterOperation,
-      index: number,
-    ) => {
-      const newOperations = operations.slice();
-      newOperations[index] = operation;
-
-      setOperations(newOperations);
-      onFilterInput(field, value, operation);
-    },
-    [operations],
   );
 
   const onToggleFilter = useCallback(() => {
@@ -187,16 +180,13 @@ export default function DataTableToolbar({
           {filters?.map(({ field, label, type }, index) => (
             <FilterTextField
               ref={(el) => (inputRefs.current[index] = el)}
-              type={type == 'string' ? 'text' : 'number'}
-              key={field}
+              type={type}
+              key={`filter_${field}${index}`}
               field={field}
               label={label}
-              onFilterInput={(value) =>
-                onFilterInput(field, value, operations[index])
-              }
-              onSelectOperation={(value, operation) =>
-                onSelectOperation(field, value, operation, index)
-              }
+              onFilterInput={(values, operations) => {
+                onFilterInput(field, values, operations);
+              }}
             />
           ))}
         </Stack>

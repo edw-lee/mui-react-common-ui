@@ -76,10 +76,7 @@ const useDataTable = <T>({
         return;
       }
 
-      const sort = fields.reduce(
-        (prev, field) => Math.sign(sortDirections[field] + prev),
-        1,
-      );
+      const sort = fields.some((f) => sortDirections[f] < 0) ? -1 : 1;
 
       result[fieldsString] = sort;
     });

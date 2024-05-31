@@ -1,21 +1,8 @@
 import { Stack, Typography } from '@mui/material';
-import { DataTable } from '@edwinlee/common-ui';
-import { useCallback, useState } from 'react';
+import { DataTable, usePaginatedTable } from '@edwinlee/common-ui';
 
 export default function DataTableTest() {
-  const [sortDirections, setSortDirections] = useState<Record<string, number>>({
-    firstName: -1,
-    lastName: -1,
-    age: -1,
-  });
-
-  const onSortDirectionClicked = useCallback(
-    (field: string) => {
-      sortDirections[field] = -sortDirections[field];
-      setSortDirections({ ...sortDirections });
-    },
-    [sortDirections],
-  );
+  const { onSortDirectionChange, sortDirections } = usePaginatedTable({});
 
   return (
     <Stack gap={1}>
@@ -72,9 +59,14 @@ export default function DataTableTest() {
             filterType: 'number',
             sortable: true,
           },
+          {
+            header: 'Date of Birth',
+            field: 'dob',
+            filterType: 'date',
+          },
         ]}
         sortDirections={sortDirections}
-        onSortDirectionClicked={onSortDirectionClicked}
+        onSortDirectionClicked={onSortDirectionChange}
         rows={[
           {
             firstName: 'Jane',

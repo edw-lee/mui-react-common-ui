@@ -51,7 +51,7 @@ export type DataTableProps<T> = {
   isLoading?: boolean;
   disableCheckbox?: boolean;
   sortDirections?: Record<string, number>;
-  onSortDirectionClicked?: (field: string) => void;
+  onSortDirectionClicked?: (field: string | string[]) => void;
 } & DataTableToolbarProps;
 
 export default function DataTable<T extends Record<string, any>>({
@@ -142,29 +142,33 @@ export default function DataTable<T extends Record<string, any>>({
                 </TableCell>
               )}
 
-              {columns.map((col, idx) => (
-                <TableCell
-                  key={idx}
-                  width={col.flex ?? `${(1 * 100) / columns.length}%`}
-                >
-                  <Stack flexDirection={'row'} alignItems={'center'} gap={1}>
-                    <Typography>{col.header}</Typography>
-                    {col.sortable && (
-                      <SortIcon
-                        sortDirection={
-                          fieldsSortDirections[col.field.toString()] > 0
-                            ? 'asc'
-                            : 'desc'
-                        }
-                        onClick={() =>
-                          onSortDirectionClicked &&
-                          onSortDirectionClicked(col.field.toString())
-                        }
-                      />
-                    )}
-                  </Stack>
-                </TableCell>
-              ))}
+              {columns.map((col, idx) => {
+                const fieldString = col.field.toString();
+
+                return (
+                  <TableCell
+                    key={idx}
+                    width={col.flex ?? `${(1 * 100) / columns.length}%`}
+                  >
+                    <Stack flexDirection={'row'} alignItems={'center'} gap={1}>
+                      <Typography>{col.header}</Typography>
+                      {col.sortable && (
+                        <SortIcon
+                          sortDirection={
+                            fieldsSortDirections[fieldString] > 0
+                              ? 'asc'
+                              : 'desc'
+                          }
+                          onClick={() =>
+                            onSortDirectionClicked &&
+                            onSortDirectionClicked(col.field)
+                          }
+                        />
+                      )}
+                    </Stack>
+                  </TableCell>
+                );
+              })}
             </TableRow>
           </TableHead>
 
