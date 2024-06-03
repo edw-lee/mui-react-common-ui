@@ -1,3 +1,5 @@
+'use client';
+
 import { IconButton, Popover, TextField } from '@mui/material';
 import { CalendarIcon } from '@mui/x-date-pickers';
 import { useEffect, useRef, useState } from 'react';

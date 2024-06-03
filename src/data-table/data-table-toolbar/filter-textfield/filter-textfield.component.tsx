@@ -1,3 +1,5 @@
+'use client';
+
 import { forwardRef } from 'react';
 import { SxProps, Theme } from '@mui/material';
 import NumberFilter from './number-filter.component';
