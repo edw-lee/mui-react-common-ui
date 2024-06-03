@@ -64,6 +64,29 @@ export default function DataTableTest() {
             field: 'dob',
             filterType: 'date',
           },
+          {
+            header: 'Title',
+            field: 'title',
+            filterType: 'dropdown',
+            options: [
+              {
+                label: 'Mr.',
+                value: 'MR',
+              },
+              {
+                label: 'Mrs.',
+                value: 'MRS',
+              },
+              {
+                label: 'Ms.',
+                value: 'MS',
+              },
+              {
+                label: 'Super Duper Mega Long Title.',
+                value: 'sdmlt',
+              },
+            ],
+          },
         ]}
         sortDirections={sortDirections}
         onSortDirectionClicked={onSortDirectionChange}

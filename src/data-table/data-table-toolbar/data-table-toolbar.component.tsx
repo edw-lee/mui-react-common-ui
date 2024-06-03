@@ -8,6 +8,7 @@ import {
 } from '@mui/material';
 import React, { useCallback, useRef, useState } from 'react';
 import FilterTextField from './filter-textfield';
+import { DropDownFilterOption } from './filter-textfield/dropdown-filter.component';
 import { TextFieldWithOptionsType } from '../../form/textfield-with-options.component';
 
 export type DataTableToolbarFilterOperation =
@@ -24,7 +25,7 @@ export type DataTableToolbarFilterType =
   | 'string'
   | 'number'
   | 'date'
-  | 'options';
+  | 'dropdown';
 export type DataTableToolbarFilterValue = {
   operation: DataTableToolbarFilterOperation;
   value: string;
@@ -34,6 +35,7 @@ export type DataTableToolbarFilter = {
   field: string;
   label?: string;
   type: DataTableToolbarFilterType;
+  options?: DropDownFilterOption[];
 };
 
 export type DataTableToolbarProps = {
@@ -181,7 +183,7 @@ export default function DataTableToolbar({
         }}
       >
         <Stack flexDirection={'row'} flexWrap={'wrap'} p={2} gap={1}>
-          {filters?.map(({ field, label, type }, index) => (
+          {filters?.map(({ field, label, type, options }, index) => (
             <FilterTextField
               ref={(el) => (inputRefs.current[index] = el)}
               type={type}
@@ -191,6 +193,7 @@ export default function DataTableToolbar({
               onFilterInput={(values, operations) => {
                 onFilterInput(field, values, operations);
               }}
+              options={options}
             />
           ))}
         </Stack>

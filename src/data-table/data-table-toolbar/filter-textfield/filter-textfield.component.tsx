@@ -3,6 +3,7 @@ import { SxProps, Theme } from '@mui/material';
 import NumberFilter from './number-filter.component';
 import StringFilter from './string-filter.component';
 import DateFilter from './date-filter.component';
+import DropDownFilter, { DropDownFilterOption } from './dropdown-filter.component';
 import {
   DataTableToolbarFilterOperation,
   DataTableToolbarFilterType,
@@ -17,6 +18,7 @@ export type FilterTextFieldProps = {
     operations?: DataTableToolbarFilterOperation[],
   ) => void;
   sx?: SxProps<Theme>;
+  options?: DropDownFilterOption[];
 };
 
 export type FilterTextFieldType = {
@@ -26,7 +28,10 @@ export type FilterTextFieldType = {
 export type FilterType = Omit<FilterTextFieldProps, 'type' | 'field'>;
 
 const FilterTextField = forwardRef<FilterTextFieldType, FilterTextFieldProps>(
-  ({ field, label, type, sx, onFilterInput }: FilterTextFieldProps, ref) => {
+  (
+    { field, label, type, sx, options, onFilterInput }: FilterTextFieldProps,
+    ref,
+  ) => {
     label = label ?? field;
 
     switch (type) {
@@ -56,6 +61,16 @@ const FilterTextField = forwardRef<FilterTextFieldType, FilterTextFieldProps>(
             ref={ref}
             sx={sx}
             label={label}
+            onFilterInput={onFilterInput}
+          />
+        );
+      case 'dropdown':
+        return (
+          <DropDownFilter
+            ref={ref}
+            sx={sx}
+            label={label}
+            options={options}
             onFilterInput={onFilterInput}
           />
         );

@@ -24,6 +24,7 @@ import DataTableToolbar, {
   DataTableToolbarProps,
 } from './data-table-toolbar';
 import SortIcon from './sort-button.component';
+import { DropDownFilterOption } from './data-table-toolbar/filter-textfield/dropdown-filter.component';
 
 export type DataTableColumn<T> = {
   field: string | string[];
@@ -32,6 +33,7 @@ export type DataTableColumn<T> = {
   sortable?: boolean;
   filterLabel?: string | string[];
   filterType?: DataTableToolbarFilterType | DataTableToolbarFilterType[];
+  options?: DropDownFilterOption[] | DropDownFilterOption[][];
   getter?: (row: T) => any;
 };
 
@@ -96,6 +98,12 @@ export default function DataTable<T extends Record<string, any>>({
     .filter((col) => !!col.filterType)
     .flatMap((col) => {
       const fields = Array.isArray(col.field) ? col.field : [col.field];
+      let options: DropDownFilterOption[][] | undefined = col.options as any;
+
+      if (col.options && !Array.isArray(col.options[0])) {
+        options = [col.options as any];
+      }
+
       let labels = [col.header];
 
       if (col.filterLabel) {
@@ -114,6 +122,7 @@ export default function DataTable<T extends Record<string, any>>({
         field,
         label: labels[Math.min(index, labels.length - 1)],
         type: filterTypes[Math.min(index, filterTypes.length - 1)]!,
+        options: options?.at(Math.min(index, options.length - 1)),
       }));
     });
 
