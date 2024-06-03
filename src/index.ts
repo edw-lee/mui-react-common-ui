@@ -10,4 +10,5 @@ export { usePaginatedTable } from './hooks';
 
 export type * as SlideModalTypes from './slide-modal';
 export type * as AlertPromptTypes from './alert-prompt';
+export type * as DataTableTypes from './data-table';
 export type { PaginatedTableHookTypes } from './hooks';
