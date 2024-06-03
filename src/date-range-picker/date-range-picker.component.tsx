@@ -8,7 +8,7 @@ import DateRangeCalendar, {
 export type DateRangePickerProps = {
   label?: string;
   value?: DateRangeCalendarValue;
-  onChange?: (range?: DateRangeCalendarValue) => void;
+  onChange: (range?: DateRangeCalendarValue) => void;
 };
 
 export default function DateRangePicker({
@@ -16,9 +16,6 @@ export default function DateRangePicker({
   value,
   onChange,
 }: DateRangePickerProps) {
-  const [dateRange, setDateRange] = useState<
-    DateRangeCalendarValue | undefined
-  >(value);
   const [calendarAnchorEl, setCalendarAnchorEl] =
     useState<HTMLButtonElement | null>(null);
   const [textFieldValue, setTextFieldValue] = useState<string>();
@@ -29,13 +26,16 @@ export default function DateRangePicker({
     setCalendarAnchorEl(calendarAnchorEl ? null : e.currentTarget);
   };
 
-  const handleDateChange = (range?: DateRangeCalendarValue) => {
-    setDateRange(range);
+  const handleDateChange = (dateRange?: DateRangeCalendarValue) => {
+    if (onChange) {
+      onChange(dateRange);
+    }
   };
 
-  const updateTextFieldValue = () => {
+  const updateTextFieldValue = (dateRange?: DateRangeCalendarValue) => {
     if (!dateRange?.from && !dateRange?.to) {
-      return null;
+      setTextFieldValue('');
+      return;
     }
 
     const format = 'DD/MM/YYYY';
@@ -57,18 +57,13 @@ export default function DateRangePicker({
     e.preventDefault();
 
     if (e.key == 'Backspace' || e.key == 'Delete') {
-      setDateRange(undefined);
-      setTextFieldValue(undefined);
+      handleDateChange(undefined);
     }
   };
 
   useEffect(() => {
-    if (onChange) {
-      onChange(dateRange);
-    }
-
-    updateTextFieldValue();
-  }, [dateRange]);
+    updateTextFieldValue(value);
+  }, [value]);
 
   return (
     <>
@@ -102,7 +97,7 @@ export default function DateRangePicker({
           horizontal: 'center',
         }}
       >
-        <DateRangeCalendar onChange={handleDateChange} value={dateRange} />
+        <DateRangeCalendar onChange={handleDateChange} value={value} />
       </Popover>
     </>
   );

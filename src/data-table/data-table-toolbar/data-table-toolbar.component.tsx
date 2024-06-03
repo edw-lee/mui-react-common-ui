@@ -7,7 +7,7 @@ import {
   Typography,
 } from '@mui/material';
 import React, { useCallback, useRef, useState } from 'react';
-import FilterTextField from './filter-textfield.component';
+import FilterTextField from './filter-textfield';
 import { TextFieldWithOptionsType } from '../../form/textfield-with-options.component';
 
 export type DataTableToolbarFilterOperation =
@@ -20,7 +20,11 @@ export type DataTableToolbarFilterOperation =
   | 'neq'
   | 'in'
   | 'nin';
-export type DataTableToolbarFilterType = 'string' | 'number' | 'date';
+export type DataTableToolbarFilterType =
+  | 'string'
+  | 'number'
+  | 'date'
+  | 'options';
 export type DataTableToolbarFilterValue = {
   operation: DataTableToolbarFilterOperation;
   value: string;
