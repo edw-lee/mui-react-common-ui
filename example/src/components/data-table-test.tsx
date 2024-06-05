@@ -1,8 +1,10 @@
 import { Stack, Typography } from '@mui/material';
 import { DataTable, usePaginatedTable } from '@edwinlee/common-ui';
+import { useEffect } from 'react';
 
 export default function DataTableTest() {
-  const { onSortDirectionChange, sortDirections } = usePaginatedTable({});
+  const { onSortDirectionChange, sortDirections, filters, setFilters } =
+    usePaginatedTable({});
 
   return (
     <Stack gap={1}>
@@ -90,6 +92,7 @@ export default function DataTableTest() {
         ]}
         sortDirections={sortDirections}
         onSortDirectionClicked={onSortDirectionChange}
+        onFiltersChange={setFilters}
         rows={[
           {
             firstName: 'Jane',

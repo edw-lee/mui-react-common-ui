@@ -6,7 +6,7 @@ import {
   Toolbar,
   Typography,
 } from '@mui/material';
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import FilterTextField from './filter-textfield';
 import { DropDownFilterOption } from './filter-textfield/dropdown-filter.component';
 import { TextFieldWithOptionsType } from '../../form/textfield-with-options.component';
@@ -98,18 +98,12 @@ export default function DataTableToolbar({
 
         const fieldKey = `${field}[${operation}]`;
 
-        if (!value) {
-          delete newFilterValues[fieldKey];
-        } else {
+        if (value) {
           newFilterValues[fieldKey] = value;
         }
-
-        setFilterValues(newFilterValues);
-
-        if (onFiltersChange) {
-          onFiltersChange(newFilterValues);
-        }
       });
+
+      setFilterValues(newFilterValues);
     },
     [filterValues],
   );
@@ -127,10 +121,14 @@ export default function DataTableToolbar({
   const onCloseFilters = useCallback(() => {
     inputRefs.current.forEach((ref) => ref?.clear());
 
-    if (onFiltersChange) {
-      onFiltersChange({});
-    }
+    setFilterValues({});
   }, [inputRefs]);
+
+  useEffect(() => {
+    if (onFiltersChange) {
+      onFiltersChange(filterValues);
+    }
+  }, [filterValues]);
 
   return (
     <Stack>
