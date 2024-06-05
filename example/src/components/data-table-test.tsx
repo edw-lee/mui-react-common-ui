@@ -1,15 +1,22 @@
 import { Stack, Typography } from '@mui/material';
-import { DataTable, usePaginatedTable } from '@edwinlee/common-ui';
-import { useEffect } from 'react';
+import {
+  DataTable,
+  DataTableTypes,
+  usePaginatedTable,
+} from '@edwinlee/common-ui';
+import { useEffect, useRef } from 'react';
 
 export default function DataTableTest() {
   const { onSortDirectionChange, sortDirections, filters, setFilters } =
     usePaginatedTable({});
 
+  const dataTableRef = useRef<DataTableTypes.DataTableType>(null);
+
   return (
     <Stack gap={1}>
       <Typography fontWeight={900}>Data Table</Typography>
       <DataTable
+        ref={dataTableRef}
         paperContainerProps={{
           sx: {
             border: '1px solid rgba(0,0,0,0.2)',
@@ -93,6 +100,7 @@ export default function DataTableTest() {
         sortDirections={sortDirections}
         onSortDirectionClicked={onSortDirectionChange}
         onFiltersChange={setFilters}
+        onRowClick={(row) => row}
         rows={[
           {
             firstName: 'Jane',

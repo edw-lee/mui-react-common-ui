@@ -16,7 +16,7 @@ import {
   TableRow,
   Typography,
 } from '@mui/material';
-import React from 'react';
+import React, { ForwardedRef, forwardRef, useImperativeHandle } from 'react';
 import useDataTable from './data-table.hooks';
 import DataTableToolbar, {
   DataTableToolbarFilter,
@@ -43,7 +43,7 @@ export type DataTableProps<T> = {
   idField?: string;
   noDataText?: string;
   emptyCellText?: string;
-  onDelete?: (deleteIds: string[], clearSelected: () => void) => void;
+  onDelete?: (deleteIds: string[]) => void;
   onRowClick?: (data: T) => void;
   customToolbarButtons?: (selected: string[]) => React.JSX.Element[];
   tablePaginationProps?: TablePaginationProps;
@@ -56,27 +56,82 @@ export type DataTableProps<T> = {
   onSortDirectionClicked?: (field: string | string[]) => void;
 } & DataTableToolbarProps;
 
-export default function DataTable<T extends Record<string, any>>({
+export type DataTableType = { clearSelected: () => void };
+
+function DataTableRow<T extends Record<string, any>>({
+  row,
   columns,
-  rows,
-  idField = '_id',
-  noDataText = 'No data.',
-  emptyCellText = 'N/A',
-  title,
-  onDelete,
+  checked,
+  onCheckClick,
   onRowClick,
-  customToolbarButtons,
-  tablePaginationProps,
-  paperContainerProps,
-  tableContainerProps,
-  tableProps,
-  isLoading,
-  disableDelete,
+  emptyCellText,
+  hover,
   disableCheckbox,
-  sortDirections = {},
-  onSortDirectionClicked,
-  onFiltersChange,
-}: DataTableProps<T>) {
+}: {
+  row: T;
+  columns: DataTableColumn<T>[];
+  checked?: boolean;
+  onCheckClick?: () => void;
+  onRowClick?: () => void;
+  emptyCellText?: string;
+  hover?: boolean;
+  disableCheckbox?: boolean;
+}) {
+  const getCellValue = (row: T, { field, getter }: DataTableColumn<T>) => {
+    let value;
+
+    if (getter) {
+      value = getter(row);
+    } else {
+      value = row[field.toString()];
+    }
+
+    return value ?? emptyCellText;
+  };
+
+  return (
+    <TableRow sx={{ cursor: hover ? 'pointer' : 'initial' }} hover={hover}>
+      {!disableCheckbox && (
+        <TableCell>
+          <Checkbox checked={checked} onClick={onCheckClick} />
+        </TableCell>
+      )}
+
+      {columns.map((col, colIdx) => (
+        <TableCell key={colIdx} onClick={onRowClick}>
+          {getCellValue(row, col)}
+        </TableCell>
+      ))}
+    </TableRow>
+  );
+}
+
+function _DataTable<T extends Record<string, any>>(
+  props: DataTableProps<T>,
+  ref: ForwardedRef<DataTableType>,
+) {
+  const {
+    columns,
+    rows,
+    idField = '_id',
+    noDataText = 'No data.',
+    emptyCellText = 'N/A',
+    title,
+    onDelete,
+    onRowClick,
+    customToolbarButtons,
+    tablePaginationProps,
+    paperContainerProps,
+    tableContainerProps,
+    tableProps,
+    isLoading,
+    disableDelete,
+    disableCheckbox,
+    sortDirections = {},
+    onSortDirectionClicked,
+    onFiltersChange,
+  } = props;
+
   const {
     onCheck,
     onCheckAll,
@@ -126,12 +181,16 @@ export default function DataTable<T extends Record<string, any>>({
       }));
     });
 
+  useImperativeHandle(ref, () => ({
+    clearSelected,
+  }));
+
   return (
     <Paper component={Stack} {...paperContainerProps}>
       <DataTableToolbar
         title={title}
         selectedCount={selectedCount}
-        onDelete={() => onDelete && onDelete(selected, clearSelected)}
+        onDelete={() => onDelete && onDelete(selected)}
         customToolbarButtons={
           customToolbarButtons && customToolbarButtons(selected)
         }
@@ -234,50 +293,8 @@ export default function DataTable<T extends Record<string, any>>({
   );
 }
 
-function DataTableRow<T extends Record<string, any>>({
-  row,
-  columns,
-  checked,
-  onCheckClick,
-  onRowClick,
-  emptyCellText,
-  hover,
-  disableCheckbox,
-}: {
-  row: T;
-  columns: DataTableColumn<T>[];
-  checked?: boolean;
-  onCheckClick?: () => void;
-  onRowClick?: () => void;
-  emptyCellText?: string;
-  hover?: boolean;
-  disableCheckbox?: boolean;
-}) {
-  const getCellValue = (row: T, { field, getter }: DataTableColumn<T>) => {
-    let value;
+const DataTable = forwardRef(_DataTable) as <T>(
+  props: DataTableProps<T> & { ref?: React.ForwardedRef<DataTableType> },
+) => ReturnType<typeof _DataTable>;
 
-    if (getter) {
-      value = getter(row);
-    } else {
-      value = row[field.toString()];
-    }
-
-    return value ?? emptyCellText;
-  };
-
-  return (
-    <TableRow sx={{ cursor: hover ? 'pointer' : 'initial' }} hover={hover}>
-      {!disableCheckbox && (
-        <TableCell>
-          <Checkbox checked={checked} onClick={onCheckClick} />
-        </TableCell>
-      )}
-
-      {columns.map((col, colIdx) => (
-        <TableCell key={colIdx} onClick={onRowClick}>
-          {getCellValue(row, col)}
-        </TableCell>
-      ))}
-    </TableRow>
-  );
-}
+export default DataTable;
