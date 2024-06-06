@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { Dispatch, SetStateAction, useMemo, useState } from 'react';
 
 export const DEFAULT_ROWS_PER_PAGE_OPTIONS = [10, 25, 50, 100];
 
@@ -9,12 +9,25 @@ export type UsePaginatedTableProps = {
   sortDirections?: Record<string, number>;
 };
 
-const usePaginatedTable = ({
+export type UsePaginatedTableReturnType = {
+  page: number;
+  rowsPerPage: number;
+  rowsPerPageOptions: number[];
+  sortDirections: Record<string, number>;
+  sortDirectionsQueryString: string;
+  filters: Record<string, string>;
+  setPage: Dispatch<SetStateAction<number>>;
+  setRowsPerPage: (rows: number) => void;
+  onSortDirectionChange: (field: string | string[]) => void;
+  setFilters: (_filters: Record<string, string>) => void;
+};
+
+export default function usePaginatedTable({
   page: initialPage = 0,
   rowsPerPage: initialRowsPerPage = DEFAULT_ROWS_PER_PAGE_OPTIONS[0],
   rowsPerPageOptions = DEFAULT_ROWS_PER_PAGE_OPTIONS,
   sortDirections: initialSortDirections = {},
-}: UsePaginatedTableProps) => {
+}: UsePaginatedTableProps): UsePaginatedTableReturnType {
   const [page, setPage] = useState(initialPage);
   const [rowsPerPage, _setRowsPerPage] = useState(initialRowsPerPage);
   const [sortDirections, setSortDirections] = useState<Record<string, number>>(
@@ -70,6 +83,4 @@ const usePaginatedTable = ({
     onSortDirectionChange,
     setFilters,
   };
-};
-
-export default usePaginatedTable;
+}
