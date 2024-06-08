@@ -4,10 +4,10 @@ import { Close } from '@mui/icons-material';
 import {
   Dialog,
   DialogContent,
+  DialogContentProps,
   DialogProps,
   DialogTitle,
   IconButton,
-  ModalProps,
   Slide,
 } from '@mui/material';
 import { TransitionProps } from '@mui/material/transitions';
@@ -20,11 +20,11 @@ export const SlideTransition = forwardRef(function SlideTransition(
   return <Slide ref={ref} {...props} direction="up" timeout={500} />;
 });
 
-type SlideModalProps = Omit<ModalProps, 'open'> & {
-  open?: boolean;
+type SlideModalProps = {
   title?: string;
   disableCloseOnBackdrop?: boolean;
   transitionProps?: TransitionProps;
+  dialogContentProps?: DialogContentProps;
 };
 
 export type SlideModalType = {
@@ -38,11 +38,12 @@ const SlideModal = forwardRef(function (
     transitionProps,
     title,
     disableCloseOnBackdrop,
+    dialogContentProps,
     ...props
   }: SlideModalProps & Omit<DialogProps, 'open'>,
   ref: React.Ref<SlideModalType | undefined>,
 ) {
-  const [open, setOpen] = useState(props.open || false);
+  const [open, setOpen] = useState(false);
   const [isClosed, setIsClosed] = useState(!open);
 
   useImperativeHandle(ref, () => ({
@@ -72,8 +73,9 @@ const SlideModal = forwardRef(function (
       }}
       closeAfterTransition
       sx={{
+        ...props.sx,
         '.MuiDialog-container': {
-          overflowY: !props.open ? 'hidden' : undefined,
+          overflowY: !open ? 'hidden' : undefined,
         },
       }}
       onClose={() => {
@@ -93,7 +95,7 @@ const SlideModal = forwardRef(function (
         <Close />
       </IconButton>
 
-      <DialogContent sx={{ pt: 3 }}>{children}</DialogContent>
+      <DialogContent {...dialogContentProps}>{children}</DialogContent>
     </Dialog>
   );
 });

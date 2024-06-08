@@ -5,6 +5,8 @@ import {
   Box,
   Dialog,
   DialogContent,
+  DialogContentProps,
+  DialogProps,
   DialogTitle,
   IconButton,
 } from '@mui/material';
@@ -15,11 +17,11 @@ import { useAlertPrompt } from '../alert-prompt/alert-prompt.component';
 type FormModalProps = {
   title: string;
   loading?: boolean;
-  open: boolean;
   isDirty: boolean;
   onClose?: () => void;
   onSubmit?: FormEventHandler<HTMLFormElement>;
   onModalExited?: () => void;
+  dialogContentProps?: DialogContentProps;
 } & PropsWithChildren;
 
 export default function FormModal({
@@ -27,11 +29,13 @@ export default function FormModal({
   loading,
   isDirty,
   open,
+  dialogContentProps,
   onSubmit,
   onModalExited,
   onClose,
   children,
-}: FormModalProps) {
+  ...dialogProps
+}: FormModalProps & DialogProps) {
   const { promptAlert } = useAlertPrompt();
 
   const handleClose = () => {
@@ -54,10 +58,12 @@ export default function FormModal({
 
   return (
     <Dialog
+      {...dialogProps}
       open={open}
       TransitionComponent={SlideTransition}
       closeAfterTransition
       sx={{
+        ...dialogProps?.sx,
         '.MuiDialog-container': {
           overflowY: !open ? 'hidden' : undefined,
         },
@@ -78,7 +84,7 @@ export default function FormModal({
         <Close />
       </IconButton>
 
-      <DialogContent sx={{ pt: 3 }}>
+      <DialogContent {...dialogContentProps}>
         <Box component="form" noValidate onSubmit={onSubmit}>
           <Box component="fieldset" disabled={loading}>
             {children}

@@ -16,7 +16,12 @@ import {
   TableRow,
   Typography,
 } from '@mui/material';
-import React, { ForwardedRef, forwardRef, useImperativeHandle } from 'react';
+import React, {
+  ForwardedRef,
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+} from 'react';
 import useDataTable from './data-table.hooks';
 import DataTableToolbar, {
   DataTableToolbarFilter,
@@ -54,6 +59,7 @@ export type DataTableProps<T> = {
   disableCheckbox?: boolean;
   sortDirections?: Record<string, number>;
   onSortDirectionClicked?: (field: string | string[]) => void;
+  onSelectedChange?: (selectdIds: string[]) => void;
 } & DataTableToolbarProps;
 
 export type DataTableType = { clearSelected: () => void };
@@ -130,6 +136,7 @@ function _DataTable<T extends Record<string, any>>(
     sortDirections = {},
     onSortDirectionClicked,
     onFiltersChange,
+    onSelectedChange,
   } = props;
 
   const {
@@ -184,6 +191,12 @@ function _DataTable<T extends Record<string, any>>(
   useImperativeHandle(ref, () => ({
     clearSelected,
   }));
+
+  useEffect(() => {
+    if (onSelectedChange) {
+      onSelectedChange(selected);
+    }
+  }, [selected]);
 
   return (
     <Paper component={Stack} {...paperContainerProps}>
