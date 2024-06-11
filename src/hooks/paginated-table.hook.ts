@@ -1,3 +1,5 @@
+'use client';
+
 import { Dispatch, SetStateAction, useMemo, useState } from 'react';
 
 export const DEFAULT_ROWS_PER_PAGE_OPTIONS = [10, 25, 50, 100];
