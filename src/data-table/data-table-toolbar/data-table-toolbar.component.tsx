@@ -1,3 +1,5 @@
+'use client';
+
 import { Clear, Delete, FilterAlt, FilterAltOff } from '@mui/icons-material';
 import {
   Collapse,
