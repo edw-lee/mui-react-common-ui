@@ -1,3 +1,5 @@
+'use client';
+
 import {
   Checkbox,
   CircularProgress,
@@ -21,6 +23,7 @@ import React, {
   forwardRef,
   useEffect,
   useImperativeHandle,
+  useMemo,
 } from 'react';
 import useDataTable from './data-table.hooks';
 import DataTableToolbar, {
@@ -188,6 +191,21 @@ function _DataTable<T extends Record<string, any>>(
       }));
     });
 
+  const totalPage = useMemo(() => {
+    if (tablePaginationProps) {
+      return Math.ceil(
+        tablePaginationProps.count / tablePaginationProps.rowsPerPage,
+      );
+    } else {
+      return 0;
+    }
+  }, [tablePaginationProps?.count, tablePaginationProps?.rowsPerPage]);
+  const maxPage = useMemo(() => Math.max(totalPage - 1, 0), [totalPage]);
+  const page = useMemo(
+    () => Math.min(tablePaginationProps?.page ?? 0, maxPage),
+    [maxPage, tablePaginationProps?.page],
+  );
+
   useImperativeHandle(ref, () => ({
     clearSelected,
   }));
@@ -197,6 +215,14 @@ function _DataTable<T extends Record<string, any>>(
       onSelectedChange(selected);
     }
   }, [selected]);
+
+  useEffect(() => {
+    if (tablePaginationProps?.onPageChange) {
+      if (tablePaginationProps.page > maxPage) {
+        tablePaginationProps.onPageChange(null, maxPage);
+      }
+    }
+  }, [tablePaginationProps?.onPageChange, maxPage]);
 
   return (
     <Paper component={Stack} {...paperContainerProps}>
@@ -297,7 +323,7 @@ function _DataTable<T extends Record<string, any>>(
         <Table>
           <TableBody>
             <TableRow>
-              <TablePagination {...tablePaginationProps} />
+              <TablePagination {...tablePaginationProps} page={page} />
             </TableRow>
           </TableBody>
         </Table>
