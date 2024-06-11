@@ -57,7 +57,7 @@ export default function DateRangeCalendar({
 
   return (
     <DateCalendar
-      value={null}
+      value={value?.to ?? value?.from}
       onChange={handleChange}
       slots={{
         day: Day,

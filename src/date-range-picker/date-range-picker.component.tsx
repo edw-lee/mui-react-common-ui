@@ -1,8 +1,9 @@
 'use client';
 
-import { IconButton, Popover, TextField } from '@mui/material';
-import { CalendarIcon } from '@mui/x-date-pickers';
-import { useEffect, useRef, useState } from 'react';
+import { alpha, Box, IconButton, Popover, Stack } from '@mui/material';
+import { CalendarIcon, DateField } from '@mui/x-date-pickers';
+import { useRef, useState } from 'react';
+import { Dayjs } from 'dayjs';
 import DateRangeCalendar, {
   DateRangeCalendarValue,
 } from './date-range-calendar.component';
@@ -20,9 +21,12 @@ export default function DateRangePicker({
 }: DateRangePickerProps) {
   const [calendarAnchorEl, setCalendarAnchorEl] =
     useState<HTMLButtonElement | null>(null);
-  const [textFieldValue, setTextFieldValue] = useState<string>();
   const showCalendar = Boolean(calendarAnchorEl);
   const calendarButtonRef = useRef<HTMLButtonElement>(null);
+  const [fromDate, setFromDate] = useState<Dayjs | undefined | null>(
+    value?.from,
+  );
+  const [toDate, setToDate] = useState<Dayjs | undefined | null>(value?.to);
 
   const toggleCalendar = (e: React.MouseEvent<HTMLButtonElement>) => {
     setCalendarAnchorEl(calendarAnchorEl ? null : e.currentTarget);
@@ -32,51 +36,33 @@ export default function DateRangePicker({
     if (onChange) {
       onChange(dateRange);
     }
+
+    setFromDate(dateRange?.from);
+    setToDate(dateRange?.to);
   };
-
-  const updateTextFieldValue = (dateRange?: DateRangeCalendarValue) => {
-    if (!dateRange?.from && !dateRange?.to) {
-      setTextFieldValue('');
-      return;
-    }
-
-    const format = 'DD/MM/YYYY';
-    const from = dateRange.from?.format(format);
-    const to = dateRange.to?.format(format);
-
-    if (from && to) {
-      setTextFieldValue(`${from} - ${to}`);
-    } else if (from) {
-      setTextFieldValue(`${from}`);
-    } else if (to) {
-      setTextFieldValue(`${to}`);
-    } else {
-      setTextFieldValue(`${format} - ${format}`);
-    }
-  };
-
-  const handleTextFieldKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    e.preventDefault();
-
-    if (e.key == 'Backspace' || e.key == 'Delete') {
-      handleDateChange(undefined);
-    }
-  };
-
-  useEffect(() => {
-    updateTextFieldValue(value);
-  }, [value]);
 
   return (
-    <>
-      <TextField
-        label={label}
-        placeholder="DD/MM/YYYY"
-        autoComplete="off"
-        focused={showCalendar || !!textFieldValue}
-        onClick={() => setCalendarAnchorEl(calendarButtonRef.current)}
-        onKeyDown={handleTextFieldKeyDown}
-        value={textFieldValue || ''}
+    <Stack flexDirection={'row'} alignItems={'center'} gap={1}>
+      <DateField
+        label={`${label} (From)`}
+        value={fromDate}
+        onChange={(value) => setFromDate(value)}
+        clearable
+      />
+
+      <Box
+        sx={(theme) => ({
+          borderBottom: 2,
+          borderColor: alpha(theme.palette.text.primary, 0.4),
+          width: 10,
+          height: 0,
+        })}
+      />
+
+      <DateField
+        label={`${label} (To)`}
+        value={toDate}
+        onChange={(value) => setToDate(value)}
         InputProps={{
           endAdornment: (
             <IconButton ref={calendarButtonRef} onClick={toggleCalendar}>
@@ -84,6 +70,7 @@ export default function DateRangePicker({
             </IconButton>
           ),
         }}
+        clearable
       />
 
       <Popover
@@ -99,8 +86,11 @@ export default function DateRangePicker({
           horizontal: 'center',
         }}
       >
-        <DateRangeCalendar onChange={handleDateChange} value={value} />
+        <DateRangeCalendar
+          onChange={handleDateChange}
+          value={{ from: fromDate, to: toDate }}
+        />
       </Popover>
-    </>
+    </Stack>
   );
 }
