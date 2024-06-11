@@ -2,6 +2,7 @@
 
 import {
   Autocomplete,
+  Chip,
   FormControl,
   FormControlProps,
   TextField,
@@ -64,6 +65,16 @@ export default function FormSelect({
             value={autoCompleteValue}
             autoHighlight
             autoSelect
+            componentsProps={{ popper: { style: { width: 'fit-content' } } }}
+            renderTags={(tagValue, getTagProps) => {
+              return tagValue.map((option, index) => (
+                <Chip
+                  {...getTagProps({ index })}
+                  key={index}
+                  label={option.label}
+                />
+              ));
+            }}
             renderInput={(params) => (
               <TextField
                 {...params}
