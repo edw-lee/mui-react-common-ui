@@ -12,6 +12,10 @@ export default function DataTableTest() {
 
   const dataTableRef = useRef<DataTableTypes.DataTableType>(null);
 
+  useEffect(() => {
+    console.log('filters:', filters);
+  }, [filters]);
+
   return (
     <Stack gap={1}>
       <Typography fontWeight={900}>Data Table</Typography>

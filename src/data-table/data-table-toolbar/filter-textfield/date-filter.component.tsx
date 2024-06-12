@@ -2,6 +2,8 @@ import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { Stack } from '@mui/material';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
 import {
   FilterTextFieldProps,
   FilterTextFieldType,
@@ -9,6 +11,8 @@ import {
 import DateRangePicker from '../../../date-range-picker';
 import { DataTableToolbarFilterOperation } from '../data-table-toolbar.component';
 import { DateRangeCalendarValue } from '../../../date-range-picker/date-range-calendar.component';
+
+dayjs.extend(utc);
 
 type DateFilterType = Omit<FilterTextFieldProps, 'type' | 'field'>;
 
@@ -21,8 +25,12 @@ const DateFilter = forwardRef<FilterTextFieldType, DateFilterType>(
     }));
 
     useEffect(() => {
-      const from = value?.from?.toISOString();
-      const to = value?.to?.toISOString();
+      const from = value?.from?.isValid()
+        ? value?.from.utc(true).toISOString()
+        : undefined;
+      const to = value?.to?.isValid()
+        ? value?.to.utc(true).toISOString()
+        : undefined;
 
       const values: string[] = [];
       let operations: DataTableToolbarFilterOperation[] = [];

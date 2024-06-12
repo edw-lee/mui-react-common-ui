@@ -2,7 +2,7 @@
 
 import { alpha, Box, IconButton, Popover, Stack } from '@mui/material';
 import { CalendarIcon, DateField } from '@mui/x-date-pickers';
-import { useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { Dayjs } from 'dayjs';
 import DateRangeCalendar, {
   DateRangeCalendarValue,
@@ -23,10 +23,12 @@ export default function DateRangePicker({
     useState<HTMLButtonElement | null>(null);
   const showCalendar = Boolean(calendarAnchorEl);
   const calendarButtonRef = useRef<HTMLButtonElement>(null);
-  const [fromDate, setFromDate] = useState<Dayjs | undefined | null>(
-    value?.from,
+  const [fromDate, setFromDate] = useState<Dayjs | undefined>(
+    value?.from ?? undefined,
   );
-  const [toDate, setToDate] = useState<Dayjs | undefined | null>(value?.to);
+  const [toDate, setToDate] = useState<Dayjs | undefined>(
+    value?.to ?? undefined,
+  );
 
   const toggleCalendar = (e: React.MouseEvent<HTMLButtonElement>) => {
     setCalendarAnchorEl(calendarAnchorEl ? null : e.currentTarget);
@@ -37,16 +39,31 @@ export default function DateRangePicker({
       onChange(dateRange);
     }
 
-    setFromDate(dateRange?.from);
-    setToDate(dateRange?.to);
+    setFromDate(dateRange?.from ?? undefined);
+    setToDate(dateRange?.to ?? undefined);
   };
+
+  const onFromDateChange = useCallback(
+    (_fromDate: Dayjs | null) => {
+      handleDateChange({ from: _fromDate, to: toDate });
+    },
+    [toDate],
+  );
+
+  const onToDateChange = useCallback(
+    (_toDate: Dayjs | null) => {
+      handleDateChange({ to: _toDate, from: fromDate });
+    },
+    [fromDate],
+  );
 
   return (
     <Stack flexDirection={'row'} alignItems={'center'} gap={1}>
       <DateField
         label={`${label} (From)`}
         value={fromDate}
-        onChange={(value) => setFromDate(value)}
+        onChange={(value) => onFromDateChange(value)}
+        maxDate={fromDate}
         clearable
       />
 
@@ -62,7 +79,7 @@ export default function DateRangePicker({
       <DateField
         label={`${label} (To)`}
         value={toDate}
-        onChange={(value) => setToDate(value)}
+        onChange={(value) => onToDateChange(value)}
         InputProps={{
           endAdornment: (
             <IconButton ref={calendarButtonRef} onClick={toggleCalendar}>
@@ -71,6 +88,7 @@ export default function DateRangePicker({
           ),
         }}
         clearable
+        minDate={fromDate}
       />
 
       <Popover
