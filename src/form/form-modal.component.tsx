@@ -3,6 +3,7 @@
 import { FormEventHandler, PropsWithChildren } from 'react';
 import {
   Box,
+  BoxProps,
   Dialog,
   DialogContent,
   DialogContentProps,
@@ -22,6 +23,8 @@ type FormModalProps = {
   onSubmit?: FormEventHandler<HTMLFormElement>;
   onModalExited?: () => void;
   dialogContentProps?: DialogContentProps;
+  formContainerProps?: BoxProps;
+  fieldsetContainerProps?: BoxProps;
 } & PropsWithChildren;
 
 export default function FormModal({
@@ -30,6 +33,8 @@ export default function FormModal({
   isDirty,
   open,
   dialogContentProps,
+  formContainerProps,
+  fieldsetContainerProps,
   onSubmit,
   onModalExited,
   onClose,
@@ -85,8 +90,17 @@ export default function FormModal({
       </IconButton>
 
       <DialogContent {...dialogContentProps}>
-        <Box component="form" noValidate onSubmit={onSubmit}>
-          <Box component="fieldset" disabled={loading}>
+        <Box
+          component="form"
+          noValidate
+          onSubmit={onSubmit}
+          {...formContainerProps}
+        >
+          <Box
+            component="fieldset"
+            disabled={loading}
+            {...fieldsetContainerProps}
+          >
             {children}
           </Box>
         </Box>
