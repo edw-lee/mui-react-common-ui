@@ -1,7 +1,18 @@
 'use client';
 
 import { Box, CircularProgress } from '@mui/material';
-import { createContext, PropsWithChildren, useContext, useState } from 'react';
+import {
+  createContext,
+  PropsWithChildren,
+  useCallback,
+  useContext,
+  useRef,
+  useState,
+} from 'react';
+
+export type SpinnerProviderProps = {
+  minOnScreenDuration?: number; //Minimum on screen duration the spinner will show on screen
+};
 
 const SpinnerContext = createContext<{
   isShowSpinner: boolean;
@@ -11,14 +22,41 @@ const SpinnerContext = createContext<{
   showSpinner: () => {},
 });
 
-export function SpinnerProvider({ children }: PropsWithChildren) {
+export function SpinnerProvider({
+  children,
+  minOnScreenDuration = 1000,
+}: PropsWithChildren & SpinnerProviderProps) {
   const [isShow, setIsShow] = useState(false);
+  const shownTimestamp = useRef(0);
+  const timeoutRef = useRef(0);
+
+  const showSpinner = useCallback(
+    (show: boolean) => {
+      if (show) {
+        shownTimestamp.current = Date.now();
+        setIsShow(true);
+      } else {
+        clearTimeout(timeoutRef.current);
+
+        const shownDuration = Date.now() - shownTimestamp.current;
+        const timeoutDuration = Math.max(
+          0,
+          minOnScreenDuration - shownDuration,
+        );
+
+        timeoutRef.current = setTimeout(() => {
+          setIsShow(false);
+        }, timeoutDuration);
+      }
+    },
+    [shownTimestamp.current],
+  );
 
   return (
     <SpinnerContext.Provider
       value={{
         isShowSpinner: isShow,
-        showSpinner: (isShow) => setIsShow(isShow),
+        showSpinner,
       }}
     >
       <fieldset {...{ inert: isShow ? '' : undefined }}>
