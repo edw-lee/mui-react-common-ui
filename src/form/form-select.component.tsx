@@ -52,6 +52,7 @@ export default function FormSelect({
         name={name}
         control={control}
         rules={rules}
+        disabled
         render={({
           field: { onChange, onBlur },
           fieldState: { invalid, error },
@@ -64,6 +65,7 @@ export default function FormSelect({
             }}
             value={autoCompleteValue}
             autoHighlight
+            disabled={props.disabled}
             autoSelect
             componentsProps={{ popper: { style: { width: 'fit-content' } } }}
             renderTags={(tagValue, getTagProps) => {
