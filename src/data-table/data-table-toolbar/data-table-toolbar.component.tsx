@@ -142,7 +142,7 @@ export default function DataTableToolbar({
             </Typography>
 
             {hasFilter && (
-              <IconButton onClick={onToggleFilter}>
+              <IconButton id="filter-button" onClick={onToggleFilter}>
                 {openFilter ? <FilterAlt /> : <FilterAltOff />}
               </IconButton>
             )}
@@ -167,7 +167,7 @@ export default function DataTableToolbar({
               )}
 
               {!disableDelete && (
-                <IconButton onClick={onDelete}>
+                <IconButton id={'delete-button'} onClick={onDelete}>
                   <Delete />
                 </IconButton>
               )}

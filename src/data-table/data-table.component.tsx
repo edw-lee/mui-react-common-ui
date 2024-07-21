@@ -99,10 +99,18 @@ function DataTableRow<T extends Record<string, any>>({
   };
 
   return (
-    <TableRow sx={{ cursor: hover ? 'pointer' : 'initial' }} hover={hover}>
+    <TableRow
+      className="datatable-row"
+      sx={{ cursor: hover ? 'pointer' : 'initial' }}
+      hover={hover}
+    >
       {!disableCheckbox && (
         <TableCell>
-          <Checkbox checked={checked} onClick={onCheckClick} />
+          <Checkbox
+            className="datatable-row-checkbox"
+            checked={checked}
+            onClick={onCheckClick}
+          />
         </TableCell>
       )}
 
