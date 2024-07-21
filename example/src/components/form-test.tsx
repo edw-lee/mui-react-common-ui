@@ -51,6 +51,7 @@ export default function FormModalTest() {
           onModalExited={reset}
         >
           <CardContent component={Stack} gap={2}>
+            <Typography>Is Dirty: {isDirty ? 'True' : 'False'}</Typography>
             <Form.FormTextField
               name="textField"
               label={'Text Field'}

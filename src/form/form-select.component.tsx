@@ -52,7 +52,6 @@ export default function FormSelect({
         name={name}
         control={control}
         rules={rules}
-        disabled
         render={({
           field: { onChange, onBlur },
           fieldState: { invalid, error },
@@ -68,6 +67,9 @@ export default function FormSelect({
             disabled={props.disabled}
             autoSelect
             componentsProps={{ popper: { style: { width: 'fit-content' } } }}
+            isOptionEqualToValue={(option, value) =>
+              option.value == value.value
+            }
             renderTags={(tagValue, getTagProps) => {
               return tagValue.map((option, index) => (
                 <Chip
